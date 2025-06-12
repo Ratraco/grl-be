@@ -10,9 +10,9 @@ const swaggerDocument = require('./swagger.json');
 
 const app = express();
 
-// CORS configuration - Allow all origins
+// CORS configuration - Allow specific origin
 app.use(cors({
-    origin: '*',
+    origin: 'https://greenlinegr.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
