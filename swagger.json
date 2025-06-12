@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://grl-be.onrender",
+      "url": "grl-be.onrender.com",
       "description": "Local development server"
     }
   ],
