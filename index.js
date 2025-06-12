@@ -9,11 +9,25 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'https://grl-frontend.onrender.com', 'https://grl-frontend.vercel.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const DEFAULT_SHEET_ID = '1fzOKalqFGruLHZUHhPwQHeorDZonL2r1daeq3ny8je8';
@@ -997,12 +1011,9 @@ app.get('/api/totals', async (req, res) => {
 });
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0'; // Listen on all network interfaces
-// app.listen(PORT, () => {
-//     console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
-//     console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
-// });
 
 app.listen(PORT, HOST, () => {
-    console.log(`✅ Server đang chạy tại http://${HOST}:${PORT}`);
-    console.log(`📚 API Documentation available at http://${HOST}:${PORT}/api-docs`);
+    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+    console.log(`🌐 Các máy khác trong mạng có thể truy cập qua IP của máy bạn`);
+    console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
 });
