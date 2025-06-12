@@ -10,15 +10,14 @@ const swaggerDocument = require('./swagger.json');
 
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'https://grl-frontend.onrender.com', 'https://grl-frontend.vercel.app'],
+// CORS configuration - Allow all origins
+app.use(cors({
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-};
+}));
 
-app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Swagger UI setup
