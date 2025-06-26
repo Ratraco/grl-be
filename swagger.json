@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "grl-be.onrender.com",
+      "url": "http://beexcelgreenline.onrender.com",
       "description": "Local development server"
     }
   ],

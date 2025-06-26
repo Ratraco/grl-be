@@ -9,24 +9,17 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 const app = express();
-
-// CORS configuration - Allow specific origin
+// app.use(cors());
 app.use(cors({
-    origin: 'https://greenlinegr.netlify.app',
+    origin: ['http://localhost:4200', 'https://beexcelgreenline.onrender.com','https://greenlinegr.netlify.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-}));
-
+  }));
 app.use(bodyParser.json());
 
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK', message: 'Server is running' });
-});
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const DEFAULT_SHEET_ID = '1fzOKalqFGruLHZUHhPwQHeorDZonL2r1daeq3ny8je8';
@@ -987,7 +980,6 @@ app.delete('/api/news-eng/:id', async (req, res) => {
     }
 });
 
-
 // Totals APIs
 app.get('/api/totals', async (req, res) => {
     try {
@@ -1000,7 +992,7 @@ app.get('/api/totals', async (req, res) => {
             STT: row[0] || '',
             ga: row[1] || '',
             viTriLayNhanHang: row[2] || '',
-            loaiCont: row[3] || '',
+            loaiCont:row[3] || '',
             soTien: row[4] || '',
         }));
 
@@ -1010,11 +1002,64 @@ app.get('/api/totals', async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi lấy dữ liệu' });
     }
 });
+
+
+// FLC APIs
+app.get('/api/flc', async (req, res) => {
+    try {
+        const rows = await handleSheetOperation('get', 'FLC!A2:G');
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ message: 'Không có dữ liệu' });
+        }
+
+        const newsData = rows.map(row => ({
+            STT: row[0] || '',
+            ga: row[1] || '',
+            viTriLayNhanHang: row[2] || '',
+            nguyenToa :row[3] || '',
+            dongKg: row[4] || '',
+            metKhoi: row[5] || '',
+        }));
+
+        res.json(newsData);
+    } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+        res.status(500).json({ error: 'Lỗi khi lấy dữ liệu' });
+    }
+});
+
+// FLC APIs
+app.get('/api/duongBo', async (req, res) => {
+    try {
+        const rows = await handleSheetOperation('get', 'DuongBo!A2:E');
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ message: 'Không có dữ liệu' });
+        }
+
+        const newsData = rows.map(row => ({
+            STT: row[0] || '',
+            ga: row[1] || '',
+            viTriLayNhanHang: row[2] || '',
+            loaiCont :row[3] || '',
+            donViTinh: row[4] || '',
+        }));
+
+        res.json(newsData);
+    } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+        res.status(500).json({ error: 'Lỗi khi lấy dữ liệu' });
+    }
+});
+
+
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0'; // Listen on all network interfaces
+// app.listen(PORT, () => {
+//     console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+//     console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
+// });
 
 app.listen(PORT, HOST, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
-    console.log(`🌐 Các máy khác trong mạng có thể truy cập qua IP của máy bạn`);
-    console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
+    console.log(`✅ Server đang chạy tại http://${HOST}:${PORT}`);
+    console.log(`📚 API Documentation available at http://${HOST}:${PORT}/api-docs`);
 });
